@@ -1,0 +1,12 @@
+{
+  "name": "pm2-setup",
+  "version": "1.0.0",
+  "description": "pm2 setup for homepilot-backend",
+  "main": "index.js",
+  "author": "Rent Technologies S.A.",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "pm2": "^5.3.1"
+  }
+}
