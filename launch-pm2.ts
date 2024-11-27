@@ -1,10 +1,9 @@
-import path from 'path';
+import * as path from 'path';
 import pm2, { StartOptions } from 'pm2';
 import { APP_INFOS, APP_PORTS, COMMON_ENV } from '../apps.config';
 import { ENABLED_APPS, FEDERATION_APP_NAME } from '../constants';
 import { AppInfo } from '../types';
 import { awaitAppReady } from '../utils';
-
 
 async function pm2StartAsync(pm2AppConfig: StartOptions) {
     return new Promise((resolve, reject) => {
@@ -27,13 +26,17 @@ function appInfoToPm2Config({ name, env, command, runFromAppFolder }: AppInfo): 
         cwd,
         script: command ?? `yarn start ${name}`,
         env: {
-            ...Object.entries(COMMON_ENV).map(([key, value]) => [key, String(value)]).reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {}),
-            ...Object.entries(env).map(([key, value]) => [key, String(value)]).reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {}),
+            ...Object.entries(COMMON_ENV)
+                .map(([key, value]) => [key, String(value)])
+                .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {}),
+            ...Object.entries(env)
+                .map(([key, value]) => [key, String(value)])
+                .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {}),
             PORT: String(APP_PORTS[name]),
         },
-    }
+    };
 
-    if(isNestApp) return baseConfig;
+    if (isNestApp) return baseConfig;
 
     return {
         ...baseConfig,
@@ -42,7 +45,7 @@ function appInfoToPm2Config({ name, env, command, runFromAppFolder }: AppInfo): 
     };
 }
 
-async function handlePm2Connection(err: unknown){
+async function handlePm2Connection(err: unknown) {
     if (err) {
         console.log('Error connecting to pm2');
         console.error(err);
@@ -50,8 +53,10 @@ async function handlePm2Connection(err: unknown){
     }
     console.log('Connected to pm2');
 
-    const appsToStart = APP_INFOS.filter((appInfo) => appInfo.name !== FEDERATION_APP_NAME && ENABLED_APPS.has(appInfo.name));
-    const federationService = APP_INFOS.find((app) => app.name === FEDERATION_APP_NAME);
+    const appsToStart = APP_INFOS.filter(
+        appInfo => appInfo.name !== FEDERATION_APP_NAME && ENABLED_APPS.has(appInfo.name),
+    );
+    const federationService = APP_INFOS.find(app => app.name === FEDERATION_APP_NAME);
 
     // Start all apps except federation
     await Promise.all(appsToStart.map(appInfoToPm2Config).map(pm2StartAsync));
