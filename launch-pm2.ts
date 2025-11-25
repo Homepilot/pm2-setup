@@ -21,10 +21,12 @@ async function pm2StartAsync(pm2AppConfig: StartOptions) {
 function appInfoToPm2Config({ name, env, command, runFromAppFolder }: AppInfo): StartOptions {
     const cwd = runFromAppFolder ? path.join(process.cwd(), 'apps', name) : process.cwd();
     const isNestApp = !runFromAppFolder || command === 'yarn start';
+    const args = (command ?? `yarn start ${name}`).split(' ');
     const baseConfig = {
         name,
         cwd,
-        script: command ?? `yarn start ${name}`,
+        script: args.shift(),
+        args,
         env: {
             ...Object.entries(COMMON_ENV)
                 .map(([key, value]) => [key, String(value)])
