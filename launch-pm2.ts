@@ -5,6 +5,8 @@ import { ENABLED_APPS, FEDERATION_APP_NAME } from '../constants';
 import { AppInfo } from '../types';
 import { awaitAppReady } from '../utils';
 
+const yarnCmd = path.join(process.cwd(), '.yarn/releases/yarn-1.22.19.cjs');
+
 async function pm2StartAsync(pm2AppConfig: StartOptions) {
     return new Promise((resolve, reject) => {
         console.log(`Starting ${pm2AppConfig.name} ...`);
@@ -21,7 +23,7 @@ async function pm2StartAsync(pm2AppConfig: StartOptions) {
 function appInfoToPm2Config({ name, env, command, runFromAppFolder }: AppInfo): StartOptions {
     const cwd = runFromAppFolder ? path.join(process.cwd(), 'apps', name) : process.cwd();
     const isNestApp = !runFromAppFolder || command === 'yarn start';
-    const args = (command ?? `yarn start ${name}`).split(' ');
+    const args = (command ?? `yarn start ${name}`).replace('yarn ', `${yarnCmd} `).split(' ');
     const baseConfig = {
         name,
         cwd,
