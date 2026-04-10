@@ -6,7 +6,7 @@
   "author": "Rent Technologies S.A.",
   "license": "MIT",
   "private": false,
-  "devDependencies": {
-    "pm2": "^5.3.1"
+  "dependencies": {
+    "pm2": "^6.0.14"
   }
 }
