@@ -59,9 +59,10 @@ const handlePm2Connection = (filter?: { include?: string[], exclude?: string[] }
     console.log('Connected to pm2');
 
     const appsToStart = APP_INFOS.filter((appInfo) => {
-        let keep = appInfo.name !== FEDERATION_APP_NAME && ENABLED_APPS.has(appInfo.name);
+        let keep = false;
         keep = !!filter?.include?.length ? filter.include.includes(appInfo.name) : keep;
         keep = !!filter?.exclude?.length ? !filter.exclude.includes(appInfo.name) : keep;
+        keep = keep && appInfo.name !== FEDERATION_APP_NAME && ENABLED_APPS.has(appInfo.name);
 
         return keep;
     });
